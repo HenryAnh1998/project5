@@ -64,7 +64,7 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
     try {
       await deleteTodo(this.props.auth.getIdToken(), todoId)
       this.setState({
-        todos: this.state.todos.filter(todo => todo.todoId != todoId)
+        todos: this.state.todos.filter(todo => todo.todoId !== todoId)
       })
     } catch {
       alert('Todo deletion failed')
@@ -85,7 +85,7 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
         })
       })
     } catch {
-      alert('Todo update failed')
+      alert('Todo deletion failed')
     }
   }
 
@@ -96,22 +96,52 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
         todos,
         loadingTodos: false
       })
-    } catch (e) {
+    } catch (e: any) {
       alert(`Failed to fetch todos: ${e.message}`)
     }
+  }
+
+  handleSearchNameChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const todos = await getTodos(this.props.auth.getIdToken())
+
+    this.setState({
+      todos: todos.filter(todo => todo.name.includes(event.target.value))
+    })
   }
 
   render() {
     return (
       <div>
-        <Header as="h1">TODOs</Header>
-
+        <Header as="h1">TASK LIST</Header>
+        
         {this.renderCreateTodoInput()}
+
+        {this.renderSearchTodoInput()}
+
 
         {this.renderTodos()}
       </div>
     )
   }
+  renderSearchTodoInput() {
+    return (
+      <Grid.Row>
+       <Grid.Column width={16}>
+          <Input
+            action={{
+              color: 'grap',
+              labelPosition: 'right',
+              icon: 'search',
+              content: 'Search'
+            }}
+            fluid
+            placeholder="Search ...."
+            onChange={this.handleSearchNameChange}
+          />
+        </Grid.Column>
+        </Grid.Row>
+        )
+      }
 
   renderCreateTodoInput() {
     return (
@@ -171,7 +201,7 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
               <Grid.Column width={10} verticalAlign="middle">
                 {todo.name}
               </Grid.Column>
-              <Grid.Column width={3} floated="right">
+              <Grid.Column width={2} floated="right">
                 {todo.dueDate}
               </Grid.Column>
               <Grid.Column width={1} floated="right">

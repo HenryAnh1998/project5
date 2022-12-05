@@ -3,6 +3,7 @@ import { Form, Button } from 'semantic-ui-react'
 import Auth from '../auth/Auth'
 import { getUploadUrl, uploadFile } from '../api/todos-api'
 
+
 enum UploadState {
   NoUpload,
   FetchingPresignedUrl,
@@ -55,9 +56,8 @@ export class EditTodo extends React.PureComponent<
 
       this.setUploadState(UploadState.UploadingFile)
       await uploadFile(uploadUrl, this.state.file)
-
-      alert('File was uploaded!')
-    } catch (e) {
+      this.props.auth.login()
+    } catch (e: any) {
       alert('Could not upload a file: ' + e.message)
     } finally {
       this.setUploadState(UploadState.NoUpload)
